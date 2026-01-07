@@ -13,15 +13,24 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Tag, MapPin, Layers, Package, SlidersHorizontal } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { usePage, Link } from '@inertiajs/vue3';
+import { BookOpen, Folder, LayoutGrid, Tag, MapPin, Layers, Package, SlidersHorizontal, Shuffle, TrendingUp, ArrowRightLeft, QrCode, Bell } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
+const page = usePage();
+
+const mainNavItems = computed<NavItem[]>(() => [
     {
         title: 'Dashboard',
         href: dashboard().url,
         icon: LayoutGrid,
+    },
+    {
+        title: 'Alerts',
+        href: '/alerts',
+        icon: Bell,
+        badge: page.props.alertsCount,
     },
     {
         title: 'Categories',
@@ -48,7 +57,27 @@ const mainNavItems: NavItem[] = [
         href: '/attributes',
         icon: SlidersHorizontal,
     },
-];
+    {
+        title: 'Variants',
+        href: '/variants',
+        icon: Shuffle,
+    },
+    {
+        title: 'Stock In',
+        href: '/stock-in',
+        icon: TrendingUp,
+    },
+    {
+        title: 'Stock Movement',
+        href: '/stock-movements',
+        icon: ArrowRightLeft,
+    },
+    {
+        title: 'QR Scan',
+        href: '/qr/scan',
+        icon: QrCode,
+    },
+]);
 
 const footerNavItems: NavItem[] = [
     {

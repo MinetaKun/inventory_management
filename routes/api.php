@@ -1,16 +1,21 @@
 <?php
 
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\LocationController;
-use App\Http\Controllers\Api\ShelfController;
-use App\Http\Controllers\Api\InventoryController;
-use App\Http\Controllers\Api\AttributeController;
-use App\Http\Controllers\Api\AttributeValueController;
 use Illuminate\Support\Facades\Route;
 
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('locations', LocationController::class);
-Route::apiResource('shelves', ShelfController::class);
-Route::apiResource('inventories', InventoryController::class);
-Route::apiResource('attributes', AttributeController::class);
-Route::apiResource('attribute-values', AttributeValueController::class);
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
+|
+*/
+
+// All internal API routes for the SPA have been moved to routes/web.php
+// to leverage Session Authentication and the "web" middleware group.
+
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });

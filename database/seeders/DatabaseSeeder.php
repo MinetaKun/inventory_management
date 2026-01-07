@@ -19,5 +19,17 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Call seeders in order of dependencies
+        $this->call([
+            CategorySeeder::class,
+            LocationSeeder::class,
+            ShelfSeeder::class,
+            InventorySeeder::class,
+            AttributeSeeder::class,
+            AttributeValueSeeder::class,
+            VariantSeeder::class,
+            StockInSeeder::class,  // Must run after VariantSeeder and LocationSeeder
+        ]);
     }
 }

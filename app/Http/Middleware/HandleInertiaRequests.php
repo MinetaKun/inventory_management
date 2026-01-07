@@ -45,6 +45,10 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'alertsCount' => $request->user() ? function () {
+                return \App\Models\Variant::whereColumn('quantity', '<=', 'min_stock')->count()
+                + \App\Models\StockMovement::overdue()->count();
+            } : 0,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

@@ -1,27 +1,5 @@
-<?php<?php
+<?php
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}    }        ];            'status' => 'required|in:active,inactive',            'value' => 'required|string|max:255|unique:attribute_values,value,NULL,id,attribute_id,' . $this->attribute_id,            'attribute_id' => 'required|exists:attributes,id',        return [    {    public function rules(): array    }        return true;    {    public function authorize(): bool{class StoreAttributeValueRequest extends FormRequestuse Illuminate\Foundation\Http\FormRequest;namespace App\Http\Requests;
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;

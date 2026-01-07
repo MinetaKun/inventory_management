@@ -14,13 +14,23 @@ class Variant extends Model
         'sku',
         'image',
         'quantity',
+        'min_stock',
         'note',
         'status',
     ];
 
     protected $casts = [
         'status' => 'string',
+        'min_stock' => 'integer',
+        'quantity' => 'integer',
     ];
+
+    protected $appends = ['is_low_stock'];
+
+    public function getIsLowStockAttribute()
+    {
+        return $this->quantity <= $this->min_stock;
+    }
 
     public function inventory()
     {

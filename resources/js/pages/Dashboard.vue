@@ -11,7 +11,8 @@ import {
     CubeIcon,
     UsersIcon,
     ShoppingCartIcon,
-    AdjustmentsHorizontalIcon
+    AdjustmentsHorizontalIcon,
+    SwatchIcon
 } from '@heroicons/vue/24/outline';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -67,6 +68,15 @@ const quickActions = [
         color: 'text-pink-600 dark:text-pink-400',
         bg: 'bg-pink-50 dark:bg-pink-900/20',
         border: 'border-pink-100 dark:border-pink-800/50'
+    },
+    {
+        name: 'Variants',
+        description: 'Manage product variants',
+        href: '/variants',
+        icon: SwatchIcon,
+        color: 'text-indigo-600 dark:text-indigo-400',
+        bg: 'bg-indigo-50 dark:bg-indigo-900/20',
+        border: 'border-indigo-100 dark:border-indigo-800/50'
     }
 ];
 </script>
