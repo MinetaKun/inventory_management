@@ -29,8 +29,28 @@ class InventoryController extends Controller
 
     public function store(StoreInventoryRequest $request)
     {
+        $data = $request->validated();
+
+        if (empty($data['sku_ref'])) {
+            $category = \App\Models\Category::find($data['category_id']);
+            $catSlug = $category ? \Illuminate\Support\Str::slug($category->name) : 'GEN';
+            $labelSlug = \Illuminate\Support\Str::slug($data['product_label']);
+            
+            // Sequence based on items in this category
+            $count = Inventory::where('category_id', $data['category_id'])->count() + 1;
+            
+            $generatedSku = strtoupper(sprintf('%s-%s-%03d', $catSlug, $labelSlug, $count));
+            
+            // Ensure uniqueness
+            while (Inventory::where('sku_ref', $generatedSku)->exists()) {
+                $count++;
+                $generatedSku = strtoupper(sprintf('%s-%s-%03d', $catSlug, $labelSlug, $count));
+            }
+            $data['sku_ref'] = $generatedSku;
+        }
+
         $inventory = Inventory::create([
-            ...$request->validated(),
+            ...$data,
             'added_by' => auth()->id() ?? 1,
         ]);
 
@@ -64,5 +84,15 @@ class InventoryController extends Controller
         return response()->json([
             'message' => 'Inventory deleted successfully',
         ]);
+    }
+
+    public function nextSequence(\Illuminate\Http\Request $request)
+    {
+        $categoryId = $request->query('category_id');
+        if (!$categoryId) {
+            return response()->json(['sequence' => 1]);
+        }
+        $count = Inventory::where('category_id', $categoryId)->count() + 1;
+        return response()->json(['sequence' => $count]);
     }
 }

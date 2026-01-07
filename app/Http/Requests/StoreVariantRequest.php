@@ -17,7 +17,7 @@ class StoreVariantRequest extends FormRequest
         return [
             'inventory_id' => 'required|exists:inventories,id',
             'sku' => [
-                'required',
+                'nullable',
                 'string',
                 'max:255',
                 Rule::unique('variants', 'sku'),

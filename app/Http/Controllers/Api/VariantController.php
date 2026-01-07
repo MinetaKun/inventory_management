@@ -30,14 +30,43 @@ class VariantController extends Controller
 
     public function store(StoreVariantRequest $request)
     {
-        $variant = Variant::create($request->only([
+        $data = $request->only([
             'inventory_id',
             'sku',
             'quantity',
             'image',
             'note',
             'status',
-        ]));
+            'min_stock',
+        ]);
+
+        if (empty($data['sku'])) {
+            $inventory = \App\Models\Inventory::with('category')->find($data['inventory_id']);
+            if ($inventory) {
+                // Generate SKU: Product-Category-001
+                $productSlug = \Illuminate\Support\Str::slug($inventory->product_name);
+                $catSlug = $inventory->category ? \Illuminate\Support\Str::slug($inventory->category->name) : 'GEN'; // General if no cat
+                
+                // Truncate slugs if too long for cleaner SKUs? 
+                // Let's take first 3 chars of Cat for "Code"? 
+                // User said "Label - category name". Let's stick to full name but slugged.
+                
+                $count = Variant::where('inventory_id', $inventory->id)->count() + 1;
+                $generatedSku = strtoupper(sprintf('%s-%s-%03d', $productSlug, $catSlug, $count));
+                
+                // Ensure uniqueness
+                while (Variant::where('sku', $generatedSku)->exists()) {
+                    $count++;
+                    $generatedSku = strtoupper(sprintf('%s-%s-%03d', $productSlug, $catSlug, $count));
+                }
+                $data['sku'] = $generatedSku;
+            } else {
+                // Fallback
+                $data['sku'] = 'VAR-' . uniqid();
+            }
+        }
+
+        $variant = Variant::create($data);
 
         // Attach attribute values with their attribute IDs
         $attributeValues = $request->attribute_values;

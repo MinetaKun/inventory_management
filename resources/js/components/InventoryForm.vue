@@ -33,14 +33,16 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">SKU Reference *</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">SKU Reference</label>
                         <input
                             v-model="form.sku_ref"
                             type="text"
-                            required
-                            placeholder="e.g., CS-DOGB-BED-001"
+                            placeholder="Leave blank to auto-generate (e.g. CAT-LABEL-001)"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+                        <div class="text-xs text-gray-500 mt-1">
+                            If blank: Category - Label - Sequence
+                        </div>
                         <span v-if="errors.sku_ref" class="text-red-600 text-sm">{{ errors.sku_ref[0] }}</span>
                     </div>
 
@@ -179,6 +181,48 @@ const close = () => {
     emit('close')
 }
 
+const nextSequence = ref(1)
+
+const slugify = (text) => {
+    return text.toString().toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .toUpperCase()
+}
+
+const fetchNextSequence = async () => {
+    if (!form.value.category_id) return
+    
+    // Only fetch for new inventory to avoid changing existing correct SKUs logic
+    // Or fetch anyway?
+    // If editing, we shouldn't change SKU unless user wants to.
+    
+    try {
+        const response = await fetch(`/api/inventories/next-sequence?category_id=${form.value.category_id}`)
+        const data = await response.json()
+        nextSequence.value = data.sequence
+        if (!props.inventory) autoGenerateSku()
+    } catch (error) {
+        console.error('Failed to fetch sequence:', error)
+    }
+}
+
+const autoGenerateSku = () => {
+    // Only auto-generate for new items or empty SKU
+    if (props.inventory && form.value.sku_ref) return
+    
+    if (!form.value.category_id || !form.value.product_label) return
+
+    const category = props.categories.find(c => c.id === form.value.category_id)
+    const catSlug = category ? slugify(category.name) : 'GEN'
+    const labelSlug = slugify(form.value.product_label)
+    const seq = String(nextSequence.value).padStart(3, '0')
+
+    form.value.sku_ref = `${catSlug}-${labelSlug}-${seq}`
+}
+
 const submit = async () => {
     try {
         errors.value = {}
@@ -198,4 +242,9 @@ const submit = async () => {
         console.error('Submit error:', error)
     }
 }
+
+watch(() => form.value.category_id, fetchNextSequence)
+watch(() => form.value.product_label, () => {
+    if (!props.inventory) autoGenerateSku()
+})
 </script>

@@ -49,16 +49,15 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">SKU *</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">SKU</label>
                         <input
                             v-model="form.sku"
                             type="text"
-                            required
-                            readonly
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-900 font-mono bg-gray-50 focus:outline-none"
+                            placeholder="Leave blank to auto-generate (e.g. LAPTOP-ELEC-001)"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         <div class="text-sm text-gray-500 mt-1">
-                            Auto-generated based on product and selected attributes
+                            If left blank, SKU will be generated as: Product - Category - Sequence
                         </div>
                         <span v-if="errors.sku" class="text-red-600 text-sm">{{ errors.sku[0] }}</span>
                     </div>
@@ -167,31 +166,10 @@ const getAttributeValuesForAttribute = (attributeId) => {
     return props.attributeValues?.filter(av => av.attribute_id === attributeId) || []
 }
 
-const generateSKU = () => {
-    if (!selectedProduct.value || form.value.attribute_values.length === 0) {
-        form.value.sku = ''
-        return
-    }
-
-    const product = selectedProduct.value
-    const selectedAttrValues = props.attributeValues?.filter(av =>
-        form.value.attribute_values.includes(av.id)
-    ) || []
-
-    // Sort by attribute name for consistent SKU generation
-    selectedAttrValues.sort((a, b) => a.attribute.name.localeCompare(b.attribute.name))
-
-    const attrParts = selectedAttrValues.map(av => av.value).join('-')
-    form.value.sku = `${product.sku_ref}-${attrParts}`
-}
-
 const onProductChange = () => {
     selectedProduct.value = props.inventories?.find(inv => inv.id === form.value.inventory_id) || null
     form.value.attribute_values = []
-    generateSKU()
 }
-
-watch(() => form.value.attribute_values, generateSKU, { deep: true })
 
 const submit = async () => {
     loading.value = true

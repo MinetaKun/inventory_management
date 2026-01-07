@@ -16,7 +16,7 @@ class StoreInventoryRequest extends FormRequest
         return [
             'product_name' => 'required|string|max:255',
             'product_label' => 'required|string|max:255',
-            'sku_ref' => 'required|string|max:100|unique:inventories,sku_ref',
+            'sku_ref' => 'nullable|string|max:100|unique:inventories,sku_ref',
             'category_id' => 'required|exists:categories,id',
             'weight' => 'nullable|numeric|min:0',
             'cost_price' => 'required|numeric|min:0',

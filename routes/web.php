@@ -11,7 +11,17 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('Dashboard', [
+        'recentMovements' => App\Models\StockMovement::with(['variant.inventory', 'fromLocation', 'toLocation'])
+            ->latest()
+            ->limit(5)
+            ->get(),
+        'kpi' => [
+            'totalProducts' => App\Models\Inventory::count(),
+            'lowStock' => App\Models\Variant::whereColumn('quantity', '<=', 'min_stock')->count(),
+            'movementsToday' => App\Models\StockMovement::whereDate('created_at', now())->count(),
+        ]
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -34,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::apiResource('categories', App\Http\Controllers\Api\CategoryController::class);
         Route::apiResource('locations', App\Http\Controllers\Api\LocationController::class);
         Route::apiResource('shelves', App\Http\Controllers\Api\ShelfController::class);
+        Route::get('inventories/next-sequence', [App\Http\Controllers\Api\InventoryController::class, 'nextSequence']);
         Route::apiResource('inventories', App\Http\Controllers\Api\InventoryController::class);
         Route::apiResource('attributes', App\Http\Controllers\Api\AttributeController::class);
         Route::apiResource('attribute-values', App\Http\Controllers\Api\AttributeValueController::class);

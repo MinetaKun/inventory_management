@@ -15,7 +15,12 @@ import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { computed } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Tag, MapPin, Layers, Package, SlidersHorizontal, Shuffle, TrendingUp, ArrowRightLeft, QrCode, Bell } from 'lucide-vue-next';
+// Added Settings and Users icons for a professional footer
+import { 
+    BookOpen, LayoutGrid, Tag, MapPin, Layers, Package, 
+    SlidersHorizontal, Shuffle, TrendingUp, ArrowRightLeft, 
+    QrCode, Bell, Settings, Users 
+} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const page = usePage();
@@ -33,34 +38,9 @@ const mainNavItems = computed<NavItem[]>(() => [
         badge: page.props.alertsCount,
     },
     {
-        title: 'Categories',
-        href: '/categories',
-        icon: Tag,
-    },
-    {
-        title: 'Locations',
-        href: '/locations',
-        icon: MapPin,
-    },
-    {
-        title: 'Shelves',
-        href: '/shelves',
-        icon: Layers,
-    },
-    {
         title: 'Products',
         href: '/inventories',
         icon: Package,
-    },
-    {
-        title: 'Attributes',
-        href: '/attributes',
-        icon: SlidersHorizontal,
-    },
-    {
-        title: 'Variants',
-        href: '/variants',
-        icon: Shuffle,
     },
     {
         title: 'Stock In',
@@ -77,18 +57,34 @@ const mainNavItems = computed<NavItem[]>(() => [
         href: '/qr/scan',
         icon: QrCode,
     },
-]);
-
-const footerNavItems: NavItem[] = [
     {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
+        title: 'Categories',
+        href: '/categories',
+        icon: Tag,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
+        title: 'Locations',
+        href: '/locations',
+        icon: MapPin,
+    },
+    {
+        title: 'Shelves',
+        href: '/shelves',
+        icon: Layers,
+    },
+]);
+
+// Replaced Github/Docs with System Management links
+const footerNavItems: NavItem[] = [
+    {
+        title: 'User Management',
+        href: '/users',
+        icon: Users,
+    },
+    {
+        title: 'Settings',
+        href: '/settings',
+        icon: Settings,
     },
 ];
 </script>
